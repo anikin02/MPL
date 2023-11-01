@@ -1,14 +1,16 @@
 import pandas
 
-dataFrame = pandas.read_csv("bdf92d44747096a5.csv")
+dataFrame = pandas.read_csv("Laboratory - 1/bdf92d44747096a5.csv")
+
+# First Part
 dataFrame = dataFrame.fillna(0)
 
-columnsDelete = []
+def findColumsForDelete(data) -> []:
+    columnsDelete = []
+    for item in data:
+        if data[item].max() == 0:
+            columnsDelete.append(item)
+    return columnsDelete
 
-for item in dataFrame:
-    if dataFrame[item].max() == 0:
-        columnsDelete.append(item)
-
-dataFrame = dataFrame.drop(columns = columnsDelete)
-
+dataFrame = dataFrame.drop(columns = findColumsForDelete(dataFrame))
 print(dataFrame)
