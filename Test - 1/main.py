@@ -57,6 +57,29 @@ def renameColumns(data):
     data.rename(columns=newNameColumns, inplace=True)
     return data
 
+def splitIncomeRange(incomeRange):
+    lowerBound = ""
+    upperBound = ""
+
+    if pandas.isna(incomeRange):
+        lowerBound = "$0"
+        upperBound = "$999,999"
+    elif "+" in incomeRange:
+        lowerBound = incomeRange[:-1]
+        upperBound = "$999,999"
+    elif "-" in incomeRange:
+        lowerBound, upperBound = incomeRange.split(" - ")
+    else:
+        lowerBound = "$0"
+        upperBound = "$999,999"
+
+    return lowerBound, upperBound
+
+def splitHouseholdIncomeColumn(data):
+    data[["Нижняя граница дохода", "Верхняя граница дохода"]] = data["Household Income"].apply(splitIncomeRange).apply(pandas.Series)
+    data = data.drop("Household Income", axis=1)
+    return data
+
 # Список людей, где мужчины поставили 4-6 часть на 1-2 место, а 1-3 часть на 5-6.
 def getDataFrametMaleOldSchoolID(data):
     filtereData = data[
@@ -76,8 +99,8 @@ def showCountFansAndUnfunsStarTrack(data):
     
 def getDataFrameTop10Female(data):
     filtereData = data[
-        (data['Пол'] == 'Female') &
-        ((data['4 часть Star Wars'] <= "2") | (data['5 часть Star Wars'] <= "2") | (data['6 часть Star Wars'] <= "2")) &
+        (data["Пол"] == "Female") &
+        ((data["4 часть Star Wars"] <= "2") | (data["5 часть Star Wars"] <= "2") | (data["6 часть Star Wars"] <= "2")) &
         (data["Поклонник Star Trek?"] == "Yes")
     ]
     return filtereData.head(10)
@@ -114,12 +137,12 @@ dataFrame = deleteFirstRow(dataFrame)
 dataFrame = deleteEmptyRaws(dataFrame)
 dataFrame = setWatched(dataFrame)
 dataFrame = renameColumns(dataFrame)
+dataFrame = splitHouseholdIncomeColumn(dataFrame)
 
 showCountFansAndUnfunsStarTrack(dataFrame)
 print(getDataFrameTop10Female(dataFrame))
 
 getCountFansFirstMovie(dataFrame)
 
+showGenderGraphFromFilm(dataFrame)
 showAgerGraphFromFilm(dataFrame)
-
-
