@@ -105,11 +105,17 @@ def getDataFrameTop10Female(data):
     ]
     return filtereData.head(10)
 
-def getCountFansFirstMovie(data):
-    filtereData = data[
-        (data['1 часть Star Wars'] == "1")
-    ]
-    return len(filtereData)
+def getCountFanstMovie(data) -> {}:
+    countFans = {}
+
+    for i in range(1, 7):
+        movie = f"{i} часть Star Wars"
+        filtereData = data[
+            (data[movie] == "1")
+        ]
+        countFans[movie] = len(filtereData)
+
+    return countFans
 
 def showGenderGraphFromFilm(data):
     groupedData = data[["1 часть Star Wars", "2 часть Star Wars", '3 часть Star Wars', '4 часть Star Wars', '5 часть Star Wars', '6 часть Star Wars', 'Пол']]
@@ -142,7 +148,7 @@ dataFrame = splitHouseholdIncomeColumn(dataFrame)
 showCountFansAndUnfunsStarTrack(dataFrame)
 print(getDataFrameTop10Female(dataFrame))
 
-getCountFansFirstMovie(dataFrame)
+print(getCountFanstMovie(dataFrame))
 
 showGenderGraphFromFilm(dataFrame)
 showAgerGraphFromFilm(dataFrame)
