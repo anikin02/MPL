@@ -1,4 +1,5 @@
 import pandas
+import matplotlib.pyplot as pyplot
 
 dataFrame = pandas.read_excel("info.xlsx", sheet_name="Sheet1")
 
@@ -66,7 +67,7 @@ def getDataFrametMaleOldSchoolID(data):
 
     return filtereData
 
-def countFansAndUnfunsStarTrack(data):
+def showCountFansAndUnfunsStarTrack(data):
     respondent_ids = getDataFrametMaleOldSchoolID(data)
     fanCount = (data["Поклонник Star Trek?"] == "Yes").sum()
     unfanCount = (data["Поклонник Star Trek?"] == "No").sum()
@@ -81,16 +82,44 @@ def getDataFrameTop10Female(data):
     ]
     return filtereData.head(10)
 
+def getCountFansFirstMovie(data):
+    filtereData = data[
+        (data['1 часть Star Wars'] == "1")
+    ]
+    return len(filtereData)
+
+def showGenderGraphFromFilm(data):
+    groupedData = data[["1 часть Star Wars", "2 часть Star Wars", '3 часть Star Wars', '4 часть Star Wars', '5 часть Star Wars', '6 часть Star Wars', 'Пол']]
+    groupedData[["1 часть Star Wars", "2 часть Star Wars", '3 часть Star Wars', '4 часть Star Wars', '5 часть Star Wars', '6 часть Star Wars']] = groupedData[['1 часть Star Wars', '2 часть Star Wars', '3 часть Star Wars', '4 часть Star Wars', '5 часть Star Wars', '6 часть Star Wars']].apply(pandas.to_numeric)
+    groupedData = groupedData.groupby("Пол").mean()
+    groupedData.T.plot(kind='bar', rot=0)
+    pyplot.title("Средняя оценка по частям Star Wars в зависимости от пола")
+    pyplot.xlabel("Часть Звездных Войн")
+    pyplot.ylabel("Средняя оценка")
+    pyplot.legend(title='Пол', loc='upper right')
+    pyplot.show()
+
+def showAgerGraphFromFilm(data):
+    groupedData = data[["1 часть Star Wars", "2 часть Star Wars", '3 часть Star Wars', '4 часть Star Wars', '5 часть Star Wars', '6 часть Star Wars', 'Возраст']]
+    groupedData[["1 часть Star Wars", "2 часть Star Wars", '3 часть Star Wars', '4 часть Star Wars', '5 часть Star Wars', '6 часть Star Wars']] = groupedData[['1 часть Star Wars', '2 часть Star Wars', '3 часть Star Wars', '4 часть Star Wars', '5 часть Star Wars', '6 часть Star Wars']].apply(pandas.to_numeric)
+    groupedData = groupedData.groupby("Возраст").mean()
+    groupedData.T.plot(kind='bar', rot=0)
+    pyplot.title("Средняя оценка по частям Star Wars в зависимости от возраста")
+    pyplot.xlabel("Часть Звездных Войн")
+    pyplot.ylabel("Средняя оценка")
+    pyplot.legend(title='Возраст', loc='upper right')
+    pyplot.show()
+
 dataFrame = deleteFirstRow(dataFrame)
 dataFrame = deleteEmptyRaws(dataFrame)
 dataFrame = setWatched(dataFrame)
 dataFrame = renameColumns(dataFrame)
 
-#countFansAndUnfunsStarTrack(dataFrame)
-
-
-
+showCountFansAndUnfunsStarTrack(dataFrame)
 print(getDataFrameTop10Female(dataFrame))
 
+getCountFansFirstMovie(dataFrame)
+
+showAgerGraphFromFilm(dataFrame)
 
 
